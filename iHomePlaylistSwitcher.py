@@ -8,7 +8,7 @@ import time
 import calendar
 
 def iHomePlaylistSwitcher():
-    """Checks the day of the week and changes the playlist in iTunes called "iHome" to whatever is pre-set for that day."""
+    """Checks the day of the week and changes the playlist in iTunes called "iHome" to whatever is pre-set for that day"""
     
     class DayOfWeekType(Enum):
         Monday    = 0
