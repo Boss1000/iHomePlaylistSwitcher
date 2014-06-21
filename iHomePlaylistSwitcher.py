@@ -64,10 +64,10 @@ def iHomePlaylistSwitcher():
                 continue
             elif '=' in line:
                 Param = GetParam(line)
-                Value = GetValue(line)
+                Value = GetValue(line).strip()
                 
                 if   "iTunesLibLoc" in Param:
-                    iTunesLibLoc = Value.rstrip()
+                    iTunesLibLoc = Value
                 elif "Alerts"       in Param:
                     Value
                 elif "Monday"       in Param:
@@ -86,7 +86,6 @@ def iHomePlaylistSwitcher():
                     DayPlaylists.append(DayPlaylist(DayOfWeekType.Sunday,    Value))
     
     # Config file closed
-    print(f1.closed)
 
     #########################
     # DAY PLAYLIST MATCHING #
@@ -96,9 +95,13 @@ def iHomePlaylistSwitcher():
     Weekday = time.gmtime(time.time()).tm_wday
     
     for day in DayPlaylists:
-        if Weekday is day.DayOfWeek:
-            DayPLStr = day.PLStr
+        if DayOfWeekType(Weekday) is day.DayOfWeek:
+            DayPLStr = day.PlaylistStr
             break
+
+    if DayPLStr is "":
+        print("Today does not have a new playlist. iHome playlist not updated.")
+        return
     
     ##########################
     # ITUNES LIBRARY PARSING #
@@ -108,25 +111,32 @@ def iHomePlaylistSwitcher():
         with open(iTunesLibLoc, 'r+') as f2:
             tree = ET.parse(f2) # Probably lengthy
             root2 = tree.getroot()[0]
+            plArray = None
             index = 0
             childList = root2.getchildren()
             for child in childList:
-                if child.text is "Playlists":
+                if child.text == "Playlists":
                     plArray = root2[index+1] # Playlist <array> element is after "<key>Playlists</key>"
                     break
                 index += 1
+
+            if plArray is None:
+                print("Could not find playlist list in iTunes library.")
+                return
             
             for PL in plArray:
-                if PL[1].tag is "string" and PL[2].text is "Playlist ID":
-                    if PL[1].text is "iHome":
+                if PL[1].tag == "string" and PL[2].text == "Playlist ID":
+                    if PL[1].text == "iHome":
                         iHomePLEle = PL
-                    if PL[1].text is DayPLStr:
+                    if PL[1].text == DayPLStr:
                         DayPLEle   = PL
             
             if iHomePLEle is None:
                 print("No iHome playlist found. Please create a blank one in iTunes and rerun.")
+                return
             if DayPLEle   is None:
                 print("Today's playlist not found: ", DayPLStr)
+                return
             
             #####################################
             # SAVE & REPLACE OLD IHOME PLAYLIST #
@@ -135,12 +145,16 @@ def iHomePlaylistSwitcher():
             # TODO Save
             
             iHomeSongs = iHomePLEle.find("array")
-            iHomeSongs = DayPLEle.find("array")
-
-            tree.write(iTunesLibLoc + ".test")
+            iHomeSongsIndex = iHomePLEle.getchildren().index(iHomeSongs)
+            iHomePLEle[iHomeSongsIndex] = DayPLEle.find("array")
+            
+            tree.write(iTunesLibLoc)
+            
+            print("iHome playlist updated to: ", DayPLStr)
     
     # Library file closed
-    print(f2.closed)
     
-    
-    
+
+# ---
+
+iHomePlaylistSwitcher()
