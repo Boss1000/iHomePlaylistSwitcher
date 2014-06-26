@@ -44,11 +44,11 @@ def iHomePlaylistSwitcher():
     
 # ---
     
-    iTunesLibLoc = ""
+    MM_DB_Loc    = ""
     DayPlaylists = list()
-    DayPLStr = ""
-    iHomePLEle = None
-    DayPLEle   = None
+    DayPLStr     = ""
+    iHomePLEle   = None
+    DayPLEle     = None
 
     #######################
     # CONFIG FILE PARSING #
@@ -66,8 +66,8 @@ def iHomePlaylistSwitcher():
                 Param = GetParam(line)
                 Value = GetValue(line).strip()
                 
-                if   "iTunesLibLoc" in Param:
-                    iTunesLibLoc = Value
+                if   "MM_DB_Loc"    in Param:
+                    MM_DB_Loc = Value
                 elif "Alerts"       in Param:
                     Value
                 elif "Monday"       in Param:
@@ -102,6 +102,16 @@ def iHomePlaylistSwitcher():
     if DayPLStr is "":
         print("Today does not have a new playlist. iHome playlist not updated.")
         return
+    
+    ###############################
+    # MEDIAMONKEY DATABASE ACCESS #
+    ###############################
+    
+    MM_DB_Mod(MM_DB_Loc, DayPLStr)
+    
+    return
+    
+# --- Old, unused stuff for iTunes
     
     ##########################
     # ITUNES LIBRARY PARSING #
