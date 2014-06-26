@@ -167,4 +167,5 @@ def iHomePlaylistSwitcher():
 
 # ---
 
-iHomePlaylistSwitcher()
+if __name__ == "__main__":
+    iHomePlaylistSwitcher()
