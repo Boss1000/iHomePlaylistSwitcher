@@ -2,15 +2,19 @@
 # Started 19 June 2014
 # By Ross Llewallyn
 
-# NOTE: Starting with just days of week
-# Ideally only load the relevant day/time/value
+# NOTES: Starting with just days of week
+#        Ideally only load the relevant day/time/value
 
 import time
 from enum import Enum
-import xml.etree.ElementTree as ET # Use cElementTree?
+import MM_DB_Mod
 
 def iHomePlaylistSwitcher():
     """Checks the day of the week and changes the playlist in iTunes called "iHome" to whatever is pre-set for that day"""
+    
+    ##################
+    # MEMBER METHODS #
+    ##################
     
     class DayOfWeekType(Enum):
         Monday    = 0
@@ -49,6 +53,7 @@ def iHomePlaylistSwitcher():
     DayPLStr     = ""
     iHomePLEle   = None
     DayPLEle     = None
+    Alerts       = False
 
     #######################
     # CONFIG FILE PARSING #
@@ -66,10 +71,16 @@ def iHomePlaylistSwitcher():
                 Param = GetParam(line)
                 Value = GetValue(line).strip()
                 
+                if Param is '' or Value is '':
+                    continue
+                
                 if   "MM_DB_Loc"    in Param:
                     MM_DB_Loc = Value
                 elif "Alerts"       in Param:
-                    Value
+                    if Value == 'True':
+                        Alerts = True
+                    else:
+                        Alerts = False
                 elif "Monday"       in Param:
                     DayPlaylists.append(DayPlaylist(DayOfWeekType.Monday,    Value))
                 elif "Tuesday"      in Param:
@@ -86,19 +97,19 @@ def iHomePlaylistSwitcher():
                     DayPlaylists.append(DayPlaylist(DayOfWeekType.Sunday,    Value))
     
     # Config file closed
-
+    
     #########################
     # DAY PLAYLIST MATCHING #
     #########################
     
     # Get day of the week
-    Weekday = time.gmtime(time.time()).tm_wday
+    Weekday = time.localtime(time.time()).tm_wday
     
     for day in DayPlaylists:
         if DayOfWeekType(Weekday) is day.DayOfWeek:
             DayPLStr = day.PlaylistStr
             break
-
+    
     if DayPLStr is "":
         print("Today does not have a new playlist. iHome playlist not updated.")
         return
@@ -107,63 +118,24 @@ def iHomePlaylistSwitcher():
     # MEDIAMONKEY DATABASE ACCESS #
     ###############################
     
-    MM_DB_Mod(MM_DB_Loc, DayPLStr)
+    Success = MM_DB_Mod.MM_DB_Mod(MM_DB_Loc, DayPLStr)
+    
+    ########################
+    # PRINT STATUS/RESULTS #
+    ########################
+    
+    if Success:
+        if Alerts:
+            input(str.format("iHome playlist switch to \"{0}\" succeeded! Press Enter to continue.", DayPLStr))
+        else:
+            print(str.format("iHome playlist switch to \"{0}\" succeeded!", DayPLStr))
+    else:
+        if Alerts:
+            input(str.format("iHome playlist switch to \"{0}\" failed. Press Enter to continue.", DayPLStr))
+        else:
+            print(str.format("iHome playlist switch to \"{0}\" failed.", DayPLStr))
     
     return
-    
-# --- Old, unused stuff for iTunes
-    
-    ##########################
-    # ITUNES LIBRARY PARSING #
-    ##########################
-    
-    if iTunesLibLoc != '':
-        with open(iTunesLibLoc, 'r+') as f2:
-            tree = ET.parse(f2) # Probably lengthy
-            root2 = tree.getroot()[0]
-            plArray = None
-            index = 0
-            childList = root2.getchildren()
-            for child in childList:
-                if child.text == "Playlists":
-                    plArray = root2[index+1] # Playlist <array> element is after "<key>Playlists</key>"
-                    break
-                index += 1
-
-            if plArray is None:
-                print("Could not find playlist list in iTunes library.")
-                return
-            
-            for PL in plArray:
-                if PL[1].tag == "string" and PL[2].text == "Playlist ID":
-                    if PL[1].text == "iHome":
-                        iHomePLEle = PL
-                    if PL[1].text == DayPLStr:
-                        DayPLEle   = PL
-            
-            if iHomePLEle is None:
-                print("No iHome playlist found. Please create a blank one in iTunes and rerun.")
-                return
-            if DayPLEle   is None:
-                print("Today's playlist not found: ", DayPLStr)
-                return
-            
-            #####################################
-            # SAVE & REPLACE OLD IHOME PLAYLIST #
-            #####################################
-            
-            # TODO Save
-            
-            iHomeSongs = iHomePLEle.find("array")
-            iHomeSongsIndex = iHomePLEle.getchildren().index(iHomeSongs)
-            iHomePLEle[iHomeSongsIndex] = DayPLEle.find("array")
-            
-            tree.write(iTunesLibLoc)
-            
-            print("iHome playlist updated to: ", DayPLStr)
-    
-    # Library file closed
-    
 
 # ---
 
