@@ -4,13 +4,14 @@
 
 # NOTES: Starting with just days of week
 #        Ideally only load the relevant day/time/value
+#        Future work: look in playlist lists.
 
 import time
 from enum import Enum
 import MM_DB_Mod
 
 def iHomePlaylistSwitcher():
-    """Checks the day of the week and changes the playlist in iTunes called "iHome" to whatever is pre-set for that day"""
+    """Checks the day of the week and changes the playlist in MediaMonkey called "iHome" to whatever is configured for that day"""
     
     ##################
     # MEMBER METHODS #
@@ -53,6 +54,7 @@ def iHomePlaylistSwitcher():
     DayPLStr     = ""
     iHomePLEle   = None
     DayPLEle     = None
+    WakeHour     = 6
     Alerts       = False
 
     #######################
@@ -81,6 +83,8 @@ def iHomePlaylistSwitcher():
                         Alerts = True
                     else:
                         Alerts = False
+                elif "WakeHour"     in Param:
+                    WakeHour  = int(Value)
                 elif "Monday"       in Param:
                     DayPlaylists.append(DayPlaylist(DayOfWeekType.Monday,    Value))
                 elif "Tuesday"      in Param:
@@ -103,7 +107,14 @@ def iHomePlaylistSwitcher():
     #########################
     
     # Get day of the week
-    Weekday = time.localtime(time.time()).tm_wday
+    Weekday = time.localtime().tm_wday
+    # Get hour in the day
+    Hour    = time.localtime().tm_hour
+    
+    # If this program runs during the day,
+    # likely want to set it for the next day!
+    if Hour > WakeHour:
+        Weekday = (Weekday + 1) % 7
     
     for day in DayPlaylists:
         if DayOfWeekType(Weekday) is day.DayOfWeek:
@@ -111,7 +122,7 @@ def iHomePlaylistSwitcher():
             break
     
     if DayPLStr is "":
-        print("Today does not have a new playlist. iHome playlist not updated.")
+        print("Today does not have a new playlist.\r\niHome playlist not updated.")
         return
     
     ###############################
@@ -126,12 +137,12 @@ def iHomePlaylistSwitcher():
     
     if Success:
         if Alerts:
-            input(str.format("iHome playlist switch to \"{0}\" succeeded! Press Enter to continue.", DayPLStr))
+            input(str.format("iHome playlist switch to \"{0}\" succeeded!\r\nPress Enter to continue...", DayPLStr))
         else:
             print(str.format("iHome playlist switch to \"{0}\" succeeded!", DayPLStr))
     else:
         if Alerts:
-            input(str.format("iHome playlist switch to \"{0}\" failed. Press Enter to continue.", DayPLStr))
+            input(str.format("iHome playlist switch to \"{0}\" failed.\r\nPress Enter to continue...", DayPLStr))
         else:
             print(str.format("iHome playlist switch to \"{0}\" failed.", DayPLStr))
     

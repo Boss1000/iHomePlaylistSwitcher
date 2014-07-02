@@ -86,4 +86,4 @@ def MM_DB_Mod(DB_Loc, New_PL):
     return False
 
 if __name__ == '__main__':
-    MM_DB_Mod("C:\\Users\\Ross the boss\\AppData\\Roaming\\MediaMonkey\\MM.db", "Favorites - Top 50")
+    MM_DB_Mod("C:\\Users\\Ross the boss\\AppData\\Roaming\\MediaMonkey\\MM.db", "Rock")
