@@ -29,7 +29,7 @@ This program was made with the following software and hardware:
 1. Clone this repo. You need:
  - iHomePlaylistSwitcher.py
  - MM_DB_Mod.py
- - iHomePlaylistSwitcher.cfg.
+ - iHomePlaylistSwitcher.cfg
 
 2. Make a shortcut to iHomePlaylistSwitcher.py. Place it in the Startup folder in Windows. For Windows 8, that's the following location: C:\Users\<username>\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
 
