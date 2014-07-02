@@ -3,9 +3,8 @@ iHomePlaylistSwitcher
 
 "Checks the day of the week and changes the playlist in MediaMonkey called "iHome" to whatever is configured for that day"
 
------------
-- Purpose -
------------
+Purpose
+-------
 
 iHome products are commonly clock radios that can use mp3 players (specifically iPods) to play music (or podcasts). They are not made by Apple, however: http://www.ihomeaudio.com/
 
@@ -15,9 +14,8 @@ The purpose of this program is to allow the user to have multiple playlists that
 
 Its purpose is fairly narrow and likely just for me and my routine and hardware. But anyone can use it!
 
-----------------
-- Instructions -
-----------------
+Instructions
+------------
 
 This program was made with the following software and hardware:
  - Windows 8
@@ -33,9 +31,7 @@ This program was made with the following software and hardware:
  - MM_DB_Mod.py
  - iHomePlaylistSwitcher.cfg.
 
-2. Make a shortcut to iHomePlaylistSwitcher.py. Place it in the Startup folder in Windows. For Windows 8, that's the following location:
-
-C:\Users\<username>\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
+2. Make a shortcut to iHomePlaylistSwitcher.py. Place it in the Startup folder in Windows. For Windows 8, that's the following location: C:\Users\<username>\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
 
 3. Open iHomePlaylistSwitcher.cfg for editing:
  - Change the "MM_DB_Loc" parameter to your MediaMonkey database location.
@@ -43,22 +39,19 @@ C:\Users\<username>\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startu
  --- Any days you do not include will leave the previous day's intact.
  - Select whether you want to be notified that the playlist switch is complete each day (True) or not (False).
  - Set you average waking hour, which will ensure that if this program is run after that time, it will load tomorrow's playlist for the morning.
-
-(Further explanations of parameters are in that file.)
+ - (Further explanations of parameters are in that file.)
 
 4. Try it out!
 
----------
-- Notes -
----------
+Notes
+-----
 
 The playlists you list in the config file are only copied into the iHome playlist. They are not renamed or at risk of being lost. The iHome playlist, however, will be wiped repeatedly!
 
 Any extra spaces in the config file may cause errors in parsing.
 
----------------
-- Development -
----------------
+Development
+-----------
 
 This is another early dive into Python coding for me!
 
