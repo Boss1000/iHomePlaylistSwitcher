@@ -14,8 +14,14 @@ The purpose of this program is to allow the user to have multiple playlists that
 
 Its purpose is fairly narrow and likely just for me and my routine and hardware. But anyone can use it!
 
-Instructions
-------------
+Notes
+-----
+
+__Make a copy of your MediaMonkey database before using this program, just in case!__
+
+The playlists you list in the config file are only copied into the iHome playlist. They are not renamed or at risk of being lost. The iHome playlist, however, will be wiped repeatedly!
+
+Any extra spaces in the config file may cause errors in parsing.
 
 This program was made with the following software and hardware:
  - Windows 8
@@ -26,29 +32,25 @@ This program was made with the following software and hardware:
 
 (Variations from this I can't guarantee will work.)
 
+Instructions
+------------
+
 1. Clone this repo. You need:
  - iHomePlaylistSwitcher.py
  - MM_DB_Mod.py
  - iHomePlaylistSwitcher.cfg
 
-2. Make a shortcut to iHomePlaylistSwitcher.py. Place it in the Startup folder in Windows. For Windows 8, that's the following location: C:\Users\<username>\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
+2. Make a shortcut to iHomePlaylistSwitcher.py. Place it in the Startup folder in Windows. For Windows 8, that's the following location: C:\Users\USERNAME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
 
 3. Open iHomePlaylistSwitcher.cfg for editing:
- - Change the "MM_DB_Loc" parameter to your MediaMonkey database location.
+ - Change the "MM_DB_Loc" parameter to your MediaMonkey database location, which may be just a user name swap.
  - Assign days of the week certain playlists.
- --- Any days you do not include will leave the previous day's intact.
+   - Any days you do not include will leave the previous day's intact.
  - Select whether you want to be notified that the playlist switch is complete each day (True) or not (False).
- - Set you average waking hour, which will ensure that if this program is run after that time, it will load tomorrow's playlist for the morning.
+ - Set your average waking hour (24-hour time), which will ensure that if this program is run after that time, it will load tomorrow's playlist for the next morning.
  - (Further explanations of parameters are in that file.)
 
-4. Try it out!
-
-Notes
------
-
-The playlists you list in the config file are only copied into the iHome playlist. They are not renamed or at risk of being lost. The iHome playlist, however, will be wiped repeatedly!
-
-Any extra spaces in the config file may cause errors in parsing.
+4. Try it out! Either restart to test it automatically running or run it immediately.
 
 Development
 -----------
