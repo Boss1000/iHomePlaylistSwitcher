@@ -1,7 +1,7 @@
 iHomePlaylistSwitcher
 =====================
 
-"Checks the day of the week and changes the playlist in MediaMonkey called "iHome" to whatever is configured for that day"
+"Checks the day of the week and changes the playlist in MediaMonkey called 'iHome' to whatever is configured for that day"
 
 Purpose
 -------
