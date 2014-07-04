@@ -49,56 +49,66 @@ def iHomePlaylistSwitcher():
     
 # ---
     
+    CfgFileName  = "iHomePlaylistSwitcher.cfg"
     MM_DB_Loc    = ""
     DayPlaylists = list()
     DayPLStr     = ""
     iHomePLEle   = None
     DayPLEle     = None
     WakeHour     = 6
-    Alerts       = False
+    Alerts       = True
 
     #######################
     # CONFIG FILE PARSING #
     #######################
-    
-    # Load configuration file
-    with open('iHomePlaylistSwitcher.cfg', 'r') as f1:
-        # Parse config file
-        for line in f1:
-            if   LineAComment(line):
-                continue
-            elif LineEmpty(line):
-                continue
-            elif '=' in line:
-                Param = GetParam(line)
-                Value = GetValue(line).strip()
-                
-                if Param is '' or Value is '':
+
+    try:
+        # Load configuration file
+        with open(CfgFileName, 'r') as f1:
+            # Parse config file
+            for line in f1:
+                if   LineAComment(line):
                     continue
-                
-                if   "MM_DB_Loc"    in Param:
-                    MM_DB_Loc = Value
-                elif "Alerts"       in Param:
-                    if Value == 'True':
-                        Alerts = True
-                    else:
-                        Alerts = False
-                elif "WakeHour"     in Param:
-                    WakeHour  = int(Value)
-                elif "Monday"       in Param:
-                    DayPlaylists.append(DayPlaylist(DayOfWeekType.Monday,    Value))
-                elif "Tuesday"      in Param:
-                    DayPlaylists.append(DayPlaylist(DayOfWeekType.Tuesday,   Value))
-                elif "Wednesday"    in Param:
-                    DayPlaylists.append(DayPlaylist(DayOfWeekType.Wednesday, Value))
-                elif "Thursday"     in Param:
-                    DayPlaylists.append(DayPlaylist(DayOfWeekType.Thursday,  Value))
-                elif "Friday"       in Param:
-                    DayPlaylists.append(DayPlaylist(DayOfWeekType.Friday,    Value))
-                elif "Saturday"     in Param:
-                    DayPlaylists.append(DayPlaylist(DayOfWeekType.Saturday,  Value))
-                elif "Sunday"       in Param:
-                    DayPlaylists.append(DayPlaylist(DayOfWeekType.Sunday,    Value))
+                elif LineEmpty(line):
+                    continue
+                elif '=' in line:
+                    Param = GetParam(line)
+                    Value = GetValue(line).strip()
+                    
+                    if Param is '' or Value is '':
+                        continue
+                    
+                    if   "MM_DB_Loc"    in Param:
+                        MM_DB_Loc = Value
+                    elif "Alerts"       in Param:
+                        if Value == 'True':
+                            Alerts = True
+                        else:
+                            Alerts = False
+                    elif "WakeHour"     in Param:
+                        WakeHour  = int(Value)
+                    elif "Monday"       in Param:
+                        DayPlaylists.append(DayPlaylist(DayOfWeekType.Monday,    Value))
+                    elif "Tuesday"      in Param:
+                        DayPlaylists.append(DayPlaylist(DayOfWeekType.Tuesday,   Value))
+                    elif "Wednesday"    in Param:
+                        DayPlaylists.append(DayPlaylist(DayOfWeekType.Wednesday, Value))
+                    elif "Thursday"     in Param:
+                        DayPlaylists.append(DayPlaylist(DayOfWeekType.Thursday,  Value))
+                    elif "Friday"       in Param:
+                        DayPlaylists.append(DayPlaylist(DayOfWeekType.Friday,    Value))
+                    elif "Saturday"     in Param:
+                        DayPlaylists.append(DayPlaylist(DayOfWeekType.Saturday,  Value))
+                    elif "Sunday"       in Param:
+                        DayPlaylists.append(DayPlaylist(DayOfWeekType.Sunday,    Value))
+    
+    except Exception as e:
+        if Alerts:
+            input("Configuration file error.\r\niHome playlist not updated.\r\nPress Enter to continue...")
+        else:
+            print("Configuration file error.\r\niHome playlist not updated.")
+        raise e
+        return
     
     # Config file closed
     
@@ -122,7 +132,10 @@ def iHomePlaylistSwitcher():
             break
     
     if DayPLStr is "":
-        print("Today does not have a new playlist.\r\niHome playlist not updated.")
+        if Alerts:
+            input("Today does not have a new playlist.\r\niHome playlist not updated.\r\nPress Enter to continue...")
+        else:
+            print("Today does not have a new playlist.\r\niHome playlist not updated.")
         return
     
     ###############################
