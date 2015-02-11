@@ -7,6 +7,7 @@
 #        Future work: look in playlist lists.
 
 import time
+import os
 from enum import Enum
 import MM_DB_Mod
 
@@ -55,8 +56,9 @@ def iHomePlaylistSwitcher():
     DayPLStr     = ""
     iHomePLEle   = None
     DayPLEle     = None
-    WakeHour     = 6
     Alerts       = True
+    WakeHour     = 6
+    MM_Exe_Loc   = ""
 
     #######################
     # CONFIG FILE PARSING #
@@ -87,6 +89,8 @@ def iHomePlaylistSwitcher():
                             Alerts = False
                     elif "WakeHour"     in Param:
                         WakeHour  = int(Value)
+                    elif "MM_Exe_Loc"   in Param:
+                        MM_Exe_Loc = Value
                     elif "Monday"       in Param:
                         DayPlaylists.append(DayPlaylist(DayOfWeekType.Monday,    Value))
                     elif "Tuesday"      in Param:
@@ -141,14 +145,23 @@ def iHomePlaylistSwitcher():
     ###############################
     # MEDIAMONKEY DATABASE ACCESS #
     ###############################
-    
-    Success = MM_DB_Mod.MM_DB_Mod(MM_DB_Loc, DayPLStr)
+
+    try:
+        Mod_Success = MM_DB_Mod.MM_DB_Mod(MM_DB_Loc, DayPLStr)
+        
+    except Exception as e:
+        if Alerts:
+            input("Database read error.\r\niHome playlist not updated.\r\nPress Enter to continue...")
+        else:
+            print("Database read error.\r\niHome playlist not updated.")
+        raise e
+        return
     
     ########################
     # PRINT STATUS/RESULTS #
     ########################
     
-    if Success:
+    if Mod_Success:
         if Alerts:
             input(str.format("iHome playlist switch to \"{0}\" succeeded!\r\nPress Enter to continue...", DayPLStr))
         else:
@@ -159,6 +172,39 @@ def iHomePlaylistSwitcher():
         else:
             print(str.format("iHome playlist switch to \"{0}\" failed.", DayPLStr))
     
+    #####################
+    # OPEN MEDIA MONKEY #
+    #####################
+    
+    if MM_Exe_Loc is not "":
+    
+        try:
+            # Must use Windows cmd "start" to open new window
+            # Otherwise console stays open until MM closes
+            # Command literally reads:
+            # start "" "C:\Program Files...\MediaMonkey.exe"
+            Run_Success = os.system(str.format("start \"\" \"{0}\"", MM_Exe_Loc))
+            
+        except Exception as e:
+            if Alerts:
+                input("Opening Media Monkey failed.\r\nPress Enter to continue...")
+            else:
+                print("Opening Media Monkey failed.")
+            raise e
+            return
+
+        # (In Windows at least) returning 0 = success, 1 = error
+        if Run_Success == 0:
+            if Alerts:
+                input("Media Monkey started.\r\nPress Enter to continue...")
+            else:
+                print("Media Monkey started.")
+        else:
+            if Alerts:
+                input("Opening Media Monkey failed.\r\nPress Enter to continue...")
+            else:
+                print("Opening Media Monkey failed.")
+
     return
 
 # ---
