@@ -48,6 +48,8 @@ Instructions
    - Any days you do not include will leave the previous day's intact.
  - Select whether you want to be notified that the playlist switch is complete each day (True) or not (False).
  - Set your average waking hour (24-hour time), which will ensure that if this program is run after that time, it will load tomorrow's playlist for the next morning.
+ - Change the "MM_Exe_Loc" parameter to your MediaMonkey executable location if you want to start the program at launch
+   - Leave blank if you do not want this feature
  - (Further explanations of parameters are in that file.)
 
 4. Try it out! Either restart to test it automatically running or run it immediately.
